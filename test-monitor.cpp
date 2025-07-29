@@ -1,33 +1,28 @@
 #include <gtest/gtest.h>
 #include "./monitor.h"
 
-TEST(Monitor, NotOkWhenAnyVitalIsOffRange) {
-  ASSERT_FALSE(vitalsOk(99, 102, 70)); // pulse high
-  ASSERT_TRUE(vitalsOk(98.1, 70, 98)); // all normal
+TEST(Monitor, TemperatureCheck) {
+  EXPECT_EQ(isTemperatureOk(98.6f), 1);
+  EXPECT_EQ(isTemperatureOk(102.1f), 0);
+  EXPECT_EQ(isTemperatureOk(94.9f), 0);
 }
 
-TEST(Monitor, CheckVitalsLogic) {
-  // Temperature critical
-  EXPECT_EQ(checkVitals(103, 80, 95), 2);
-  EXPECT_EQ(checkVitals(94, 80, 95), 2);
-  // Pulse out of range
-  EXPECT_EQ(checkVitals(98, 59, 95), 3);
-  EXPECT_EQ(checkVitals(98, 101, 95), 3);
-  // SpO2 out of range
-  EXPECT_EQ(checkVitals(98, 80, 89), 4);
-  // All normal
-  EXPECT_EQ(checkVitals(98, 80, 95), 1);
+TEST(Monitor, PulseRateCheck) {
+  EXPECT_EQ(isPulseRateOk(70), 1);
+  EXPECT_EQ(isPulseRateOk(59), 0);
+  EXPECT_EQ(isPulseRateOk(101), 0);
 }
 
-TEST(Monitor, VitalsOkCoversAllBranches) {
-  // Temperature critical
-  ASSERT_FALSE(vitalsOk(103, 80, 95));
-  ASSERT_FALSE(vitalsOk(94, 80, 95));
-  // Pulse out of range
-  ASSERT_FALSE(vitalsOk(98, 59, 95));
-  ASSERT_FALSE(vitalsOk(98, 101, 95));
-  // SpO2 out of range
-  ASSERT_FALSE(vitalsOk(98, 80, 89));
+TEST(Monitor, Spo2Check) {
+  EXPECT_EQ(isSpo2Ok(95), 1);
+  EXPECT_EQ(isSpo2Ok(89), 0);
+}
+
+TEST(Monitor, VitalsOkIntegration) {
   // All normal
-  ASSERT_TRUE(vitalsOk(98, 80, 95));
+  ASSERT_TRUE(vitalsOk(98.1, 70, 98));
+  // Each vital abnormal
+  ASSERT_FALSE(vitalsOk(103, 70, 98)); // temp high
+  ASSERT_FALSE(vitalsOk(98.1, 59, 98)); // pulse low
+  ASSERT_FALSE(vitalsOk(98.1, 70, 89)); // spo2 low
 }
