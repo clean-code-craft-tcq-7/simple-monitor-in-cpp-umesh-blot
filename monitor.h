@@ -1,4 +1,9 @@
 #pragma once
+#include <string>
+#include <assert.h>
+#include <thread>
+#include <chrono>
+#include <iostream>
 
 int vitalsOk(float temperature, float pulseRate, float spo2);
 void displayVitalAlert(const std::string& message);
