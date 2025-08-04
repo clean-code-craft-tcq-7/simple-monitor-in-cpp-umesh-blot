@@ -1,6 +1,6 @@
 #pragma once
-#include <string>
 #include <assert.h>
+#include <string>
 #include <thread>
 #include <chrono>
 #include <iostream>
